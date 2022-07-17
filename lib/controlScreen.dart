@@ -66,7 +66,7 @@ class ControlScreen extends StatelessWidget {
                   _controller.complete(webViewController);
                 },
                 onProgress: (int progress) {
-                  print('PayMOb iframe is loading (progress : $progress%)');
+                  print('web is loading (progress : $progress%)');
                 },
                 javascriptChannels: <JavascriptChannel>{
                   _toasterJavascriptChannel(context),
