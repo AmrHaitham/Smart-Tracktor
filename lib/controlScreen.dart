@@ -1,13 +1,16 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ControlScreen extends StatelessWidget {
   final String name;
   final String endpoint;
+  final String image;
 
-  const ControlScreen({Key? key,required this.name,required this.endpoint}) : super(key: key);
+  ControlScreen({Key? key,required this.name,required this.endpoint,required this.image}) : super(key: key);
 
    action(String actionType) async {
     final response = await http.post(
@@ -30,6 +33,17 @@ class ControlScreen extends StatelessWidget {
       throw Exception('Failed to create action.');
     }
   }
+  JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
+    return JavascriptChannel(
+        name: 'Toaster',
+        onMessageReceived: (JavascriptMessage message) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message.message)),
+          );
+        });
+  }
+  final Completer<WebViewController> _controller =
+  Completer<WebViewController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,77 +51,131 @@ class ControlScreen extends StatelessWidget {
         title: Text(name),
       ),
       body: Container(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height*0.4,
-        decoration: BoxDecoration(
-          color: Color(0xfff607d8b),
-          borderRadius: BorderRadius.all(Radius.circular(150))
-        ),
-        padding: EdgeInsets.only(top: 20),
-        margin: EdgeInsets.only(left: 10,right: 10,top: MediaQuery.of(context).size.height*0.19),
         child: Column(
           children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Color(0xfff607d8b),
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(20),
+            Container(
+              padding: EdgeInsets.all(10),
+              width: double.infinity,
+              height:MediaQuery.of(context).size.height*0.3,
+              child: WebView(
+                zoomEnabled: true,
+                allowsInlineMediaPlayback: true,
+                initialUrl: 'https://github.com/AmrHaitham/',
+                javascriptMode: JavascriptMode.unrestricted,
+                onWebViewCreated: (WebViewController webViewController) {
+                  _controller.complete(webViewController);
+                },
+                onProgress: (int progress) {
+                  print('PayMOb iframe is loading (progress : $progress%)');
+                },
+                javascriptChannels: <JavascriptChannel>{
+                  _toasterJavascriptChannel(context),
+                },
+                onPageStarted: (String url) {
+                  print('Page started loading: $url');
+                },
+                onPageFinished: (String url) {
+                  print('Page finished loading: $url');
+                },
+                gestureNavigationEnabled: true,
+                backgroundColor: const Color(0x00000000),
               ),
-              child: const Icon(
-                Icons.arrow_upward,
-                size: 50,
-              ),
-              onPressed: () {
-                action("up");
-              },
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      primary: Color(0xfff607d8b),
-                      padding: const EdgeInsets.all(20)
+            SizedBox(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height*0.55,
+              child: ListView(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height*0.3,
+                    decoration: BoxDecoration(
+                      color: Color(0xfff607d8b),
+                      borderRadius: BorderRadius.all(Radius.circular(150)),
+                      image: DecorationImage(
+                        image:const AssetImage("assets/pattern.jpg"),
+                        colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.05), BlendMode.dstATop),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    padding: EdgeInsets.only(top: 15),
+                    margin: EdgeInsets.only(left: 10,right: 10,top: 10),
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Color(0xfff607d8b),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(10),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_upward,
+                            size: 50,
+                          ),
+                          onPressed: () {
+                            action("up");
+                          },
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  primary: Color(0xfff607d8b),
+                                  padding: const EdgeInsets.all(10)
+                              ),
+                              child: const Icon(
+                                Icons.arrow_back,
+                                size: 50,
+                              ),
+                              onPressed: () {
+                                action("left");
+                              },
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  primary: Color(0xfff607d8b),
+                                  padding: const EdgeInsets.all(10)
+                              ),
+                              child: const Icon(
+                                Icons.arrow_forward,
+                                size: 50,
+                              ),
+                              onPressed: () {
+                                action("right");
+                              },
+                            ),
+                          ],
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              primary: Color(0xfff607d8b),
+                              padding: const EdgeInsets.all(10)
+                          ),
+                          child: const Icon(
+                            Icons.arrow_downward,
+                            size: 50,
+                          ),
+                          onPressed: () {
+                            action("down");
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    size: 50,
+                  Container(
+                      margin:const EdgeInsets.only(top: 10),
+                      width:200,
+                      height:200,
+                      child: Image.asset(image)
                   ),
-                  onPressed: () {
-                    action("left");
-                  },
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      primary: Color(0xfff607d8b),
-                      padding: const EdgeInsets.all(20)
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward,
-                    size: 50,
-                  ),
-                  onPressed: () {
-                    action("right");
-                  },
-                ),
-              ],
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  primary: Color(0xfff607d8b),
-                  padding: const EdgeInsets.all(20)
+                ],
               ),
-              child: const Icon(
-                Icons.arrow_downward,
-                size: 50,
-              ),
-              onPressed: () {
-                action("down");
-              },
             ),
+
           ],
         ),
       ),
