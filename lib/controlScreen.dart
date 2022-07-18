@@ -60,7 +60,7 @@ class ControlScreen extends StatelessWidget {
               child: WebView(
                 zoomEnabled: true,
                 allowsInlineMediaPlayback: true,
-                initialUrl: 'https://github.com/AmrHaitham/',
+                initialUrl: 'https://www.google.com/maps/place/Faculty+of+Agricultural+Engineering,+Al-Azhar+University+Cairo+Branch/@30.0541341,31.3207675,15z/data=!4m5!3m4!1s0x0:0x10c57af2b0bec9a5!8m2!3d30.0541341!4d31.3207675',
                 javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (WebViewController webViewController) {
                   _controller.complete(webViewController);

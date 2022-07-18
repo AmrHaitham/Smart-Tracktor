@@ -23,32 +23,32 @@ class _MyHomePageState extends State<MyHomePage> {
   var data = [
     {
       "name":"Front wheel steering",
-      "endPoint":"http://127.0.0.1:8080/x_pos",
+      "endPoint":"http://127.0.0.1:8080/move1",
       "image":"assets/1.png"
     },
     {
       "name":"Rear wheel steering",
-      "endPoint":"http://127.0.0.1:8080/x_pos",
+      "endPoint":"http://127.0.0.1:8080/move2",
       "image":"assets/2.png"
     },
     {
       "name":"Four wheel steering",
-      "endPoint":"http://127.0.0.1:8080/x_pos",
+      "endPoint":"http://127.0.0.1:8080/move3",
       "image":"assets/3.png"
     },
     {
       "name":"Crab steering",
-      "endPoint":"http://127.0.0.1:8080/x_pos",
+      "endPoint":"http://127.0.0.1:8080/move4",
       "image":"assets/4.png"
     },
     {
       "name":"Side steering",
-      "endPoint":"http://127.0.0.1:8080/x_pos",
+      "endPoint":"http://127.0.0.1:8080/move5",
       "image":"assets/5.png"
     },
     {
       "name":"Zero turn steering",
-      "endPoint":"http://127.0.0.1:8080/x_pos",
+      "endPoint":"http://127.0.0.1:8080/move6",
       "image":"assets/6.png"
     },
   ];
